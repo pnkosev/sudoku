@@ -1,14 +1,15 @@
 package sudoku.view;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 
 public class GrilleView {
 	JFrame frame;
-	JPanel grillePanel, buttonPanel;
+	JPanel grillePanel, buttonPanel, headerPanel;
 	private Field[][] fields; // Array of fields.
 	private JPanel[][] panels; // Panels holding the fields.
 	Color rougeErreur = new Color(252, 77, 77);
@@ -17,6 +18,10 @@ public class GrilleView {
 	private boolean avecAide = false;
 	private int[][] grilleSolution;
 	private int[][] grilleJoueur;
+	private int secondes;
+	private Timer timer;
+	private JLabel timerAffichage;
+	private DecimalFormat timeFormatter;
 
 	public GrilleView(JFrame frame, int[][] grilleSolution, int[][] grilleJoueur) {
 		this.grilleSolution = grilleSolution;
@@ -49,8 +54,10 @@ public class GrilleView {
 			}
 		}
 		setGame(null);
+		initHeader();
 		initButtons();
 		frame.getContentPane().removeAll();
+		frame.add(headerPanel, BorderLayout.NORTH);
 		frame.add(grillePanel, BorderLayout.CENTER);
 		frame.add(buttonPanel, BorderLayout.PAGE_END);
 		frame.revalidate();
@@ -76,7 +83,45 @@ public class GrilleView {
 			}
 		}
 	}
-
+	
+	private String miseAJourTimer() {
+		int m = 0;
+		int s = 0;
+		if (secondes < 60) {
+			s = secondes;
+		} else {
+			s = secondes % 60;
+			m = secondes / 60;
+		}
+		
+		
+		return String.format("%d:%d", m, s);
+	}
+	
+	public void initTimer(){
+		this.timer = new Timer(1000, e -> {
+			this.secondes++;
+			this.timerAffichage.setText(timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60));
+		});
+		this.timer.start();
+	}
+	
+	public void initHeader() {
+		this.headerPanel =new JPanel(new FlowLayout(10));
+		JCheckBox aideBox = new JCheckBox();
+		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
+		aideBox.addActionListener(e -> {
+			boolean estCochee = aideBox.isSelected();
+			avecAide = estCochee ? true : false;
+		});
+		this.headerPanel.add(aideBox);
+		this.headerPanel.add(aideboxJLabel);
+		timeFormatter = new DecimalFormat("00");
+		initTimer();
+		this.timerAffichage = new JLabel();
+		this.headerPanel.add(timerAffichage);
+	}
+	
 	public void initButtons() {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
