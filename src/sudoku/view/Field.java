@@ -11,8 +11,10 @@ import java.awt.*;
 public class Field extends JLabel {
     private int x;      // X position in game.
     private int y;      // Y position in game.
+    private boolean isEditable = false;
 
-    /**
+
+	/**
      * Constructs the label and sets x and y positions in game.
      *
      * @param x     X position in game.
@@ -57,4 +59,13 @@ public class Field extends JLabel {
     public int getFieldY() {
         return y;
     }
+    
+    public boolean isEditable() {
+		return isEditable;
+	}
+
+	public void setEditable(boolean isEditable) {
+		this.isEditable = isEditable;
+	}
+    
 }

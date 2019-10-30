@@ -23,7 +23,7 @@ public class SudokuController {
         Random rand = new Random();
         for (int y = 0; y < 9; y++) {
             for (int x = 0; x < 9; x++) {
-                data[y][x] = rand.nextInt(9) + 1;
+                data[y][x] = rand.nextInt(10) ;
             }
         }
 

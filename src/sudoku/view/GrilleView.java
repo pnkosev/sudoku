@@ -64,6 +64,7 @@ public class GrilleView {
                 }
                 fields[y][x].setBackground(Color.WHITE);
                 fields[y][x].setNumber(tmp, false);
+                fields[y][x].setEditable( tmp == 0 );
             }
         }
     }
@@ -75,14 +76,23 @@ public class GrilleView {
             buttonPanel.add(button);
             button.addActionListener(e -> putNumber( Integer.parseInt(button.getText() )));
         }
+        JButton buttonEffacer = new JButton("Effacer");
+        buttonPanel.add(buttonEffacer);
+        buttonEffacer.addActionListener(e -> selectedField.setNumber(0, true));
+        
     }
     
     public void selectField(Field field) {
-    	if (selectedField !=null) {
-    		selectedField.setBackground(Color.WHITE);
+    	if(field.isEditable()) {
+    	
+	    	if (selectedField !=null) {
+	    		selectedField.setBackground(Color.WHITE);
+	    	}
+	    	
+	    	
+	    	field.setBackground(Color.ORANGE);
+	    	selectedField = field;
     	}
-    	field.setBackground(Color.ORANGE);
-    	selectedField = field;
     	
     }
     
