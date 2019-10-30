@@ -19,38 +19,24 @@ public class SudokuController {
         this.generateurGrilleSolution = new GenerateurGrilleSolution();
     }
 
-    public void newGrille() {
-        this.view = new GrilleView(frame);
-        
-        this.grilleSolution = this.generateurGrilleSolution.getGrilleSolution();
-    	String niveauDifficulte = "expert";
-    	
+    public void newGrille(String niveauDifficulte) {
+    	this.grilleSolution = this.generateurGrilleSolution.getGrilleSolution();
     	this.generateurGrilleJoueur = new GenerateurGrilleJoueur(grilleSolution, niveauDifficulte);
     	
     	this.grilleJoueur = generateurGrilleJoueur.getGrilleJoueur();
+    	
+        this.view = new GrilleView(frame, grilleSolution,grilleJoueur);
+           	
+    	
+    	
         
         this.view.setGame(grilleJoueur);
         
         // test validation grille
-        estGrilleValide();
+        //estGrilleValide();
     }
 
-    public boolean estGrilleValide() {
-		boolean estValide = true;    	
-    	
-		for (int ligne = 0; ligne < grilleJoueur.length; ligne++) {
-			for (int col = 0; col < grilleJoueur[ligne].length; col++) {
-				if (grilleJoueur[ligne][col] != grilleSolution[ligne][col]) {
-					this.view.mettreEnErreur(ligne, col);
-					estValide = false;
-				} else {
-					this.view.mettreEnValide(ligne, col);
-				}
-			}
-		}
-		
-    	return estValide;
-	}
+   
 
 //    public boolean estCaseValide() {
 //		
