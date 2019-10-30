@@ -11,6 +11,7 @@ public class GrilleView {
     private JPanel[][] panels;      // Panels holding the fields.
     Color rougeErreur = new Color(252, 77, 77);
     Color vertValide = new Color(45, 236, 38);
+    private Field selectedField;
     
     public GrilleView(JFrame frame) {
         grillePanel = new JPanel(new GridLayout(3, 3));
