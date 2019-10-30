@@ -1,32 +1,58 @@
 package sudoku.controller;
 
+import sudoku.service.GenerateurGrilleJoueur;
+import sudoku.service.GenerateurGrilleSolution;
 import sudoku.view.GrilleView;
 
 import javax.swing.*;
-import java.util.Random;
 
 public class SudokuController {
-    JFrame frame;
-
+	private JFrame frame;
+    private GrilleView view;
+    private GenerateurGrilleSolution generateurGrilleSolution;
+    private GenerateurGrilleJoueur generateurGrilleJoueur;
+    private int[][] grilleSolution;
+    private int[][] grilleJoueur;
 
     public SudokuController(JFrame frame) {
         this.frame = frame;
+        this.generateurGrilleSolution = new GenerateurGrilleSolution();
     }
 
     public void newGrille() {
-        GrilleView view = new GrilleView(frame);
-        view.setGame(getRandomData());
+        this.view = new GrilleView(frame);
+        
+        this.grilleSolution = this.generateurGrilleSolution.getGrilleSolution();
+    	String niveauDifficulte = "expert";
+    	
+    	this.generateurGrilleJoueur = new GenerateurGrilleJoueur(grilleSolution, niveauDifficulte);
+    	
+    	this.grilleJoueur = generateurGrilleJoueur.getGrilleJoueur();
+        
+        this.view.setGame(grilleJoueur);
+        
+        // test validation grille
+        estGrilleValide();
     }
 
-    public int[][] getRandomData() {
-        int [][] data = new int[9][9];
-        Random rand = new Random();
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
-                data[y][x] = rand.nextInt(9) + 1;
-            }
-        }
+    public boolean estGrilleValide() {
+		boolean estValide = true;    	
+    	
+		for (int ligne = 0; ligne < grilleJoueur.length; ligne++) {
+			for (int col = 0; col < grilleJoueur[ligne].length; col++) {
+				if (grilleJoueur[ligne][col] != grilleSolution[ligne][col]) {
+					this.view.mettreEnErreur(ligne, col);
+					estValide = false;
+				} else {
+					this.view.mettreEnValide(ligne, col);
+				}
+			}
+		}
+		
+    	return estValide;
+	}
 
-        return data;
-    }
+//    public boolean estCaseValide() {
+//		
+//	}
 }

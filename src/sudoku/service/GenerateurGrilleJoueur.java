@@ -9,12 +9,18 @@ public class GenerateurGrilleJoueur {
 	HashSet<Integer> colsTestes;
 	private int nombreChiffresCol;
 	
-	public GenerateurGrilleJoueur() {
+	public GenerateurGrilleJoueur(int[][] grilleSolution, String niveau) {
 		this.chiffreAleatoire = new Random();
 		this.colsTestes = new HashSet<Integer>();
+		
+		boolean estGrilleJoueurGeneree = creeGrilleJoueur(grilleSolution, niveau);
+    	
+    	while (!estGrilleJoueurGeneree) {
+    		estGrilleJoueurGeneree = creeGrilleJoueur(grilleSolution, niveau);
+    	}
 	}
 	
-	public boolean creeGrilleJoueur(int[][] grilleSolution, String niveau) {
+	private boolean creeGrilleJoueur(int[][] grilleSolution, String niveau) {
 		switch (niveau) {
 		case "debutant":
 			nombreChiffresCol = 4;

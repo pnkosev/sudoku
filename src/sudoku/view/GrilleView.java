@@ -1,15 +1,17 @@
 package sudoku.view;
 
 import javax.swing.*;
+
 import java.awt.*;
-import java.util.ArrayList;
 
 public class GrilleView {
     JFrame frame;
     JPanel grillePanel, buttonPanel;
     private Field[][] fields;       // Array of fields.
     private JPanel[][] panels;      // Panels holding the fields.
-
+    Color rougeErreur = new Color(252, 77, 77);
+    Color vertValide = new Color(45, 236, 38);
+    
     public GrilleView(JFrame frame) {
         grillePanel = new JPanel(new GridLayout(3, 3));
         panels = new JPanel[3][3];
@@ -63,4 +65,12 @@ public class GrilleView {
             buttonPanel.add(button);
         }
     }
+    
+    public void mettreEnErreur(int ligne, int col) {
+		fields[ligne][col].setBackground(this.rougeErreur);
+	}
+    
+    public void mettreEnValide(int ligne, int col) {
+    	fields[ligne][col].setBackground(this.vertValide);
+	}
 }
