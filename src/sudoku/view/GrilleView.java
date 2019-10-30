@@ -2,6 +2,8 @@ package sudoku.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GrilleView {
@@ -9,7 +11,7 @@ public class GrilleView {
     JPanel grillePanel, buttonPanel;
     private Field[][] fields;       // Array of fields.
     private JPanel[][] panels;      // Panels holding the fields.
-
+    private Field selectedField;
     public GrilleView(JFrame frame) {
         grillePanel = new JPanel(new GridLayout(3, 3));
         panels = new JPanel[3][3];
@@ -25,8 +27,18 @@ public class GrilleView {
         fields = new Field[9][9];
         for (int y = 0; y < 9; y++) {
             for (int x = 0; x < 9; x++) {
-                fields[y][x] = new Field(x, y);
+            	Field field = new Field(x, y);
+                fields[y][x] = field;
                 panels[y / 3][x / 3].add(fields[y][x]);
+                field.addMouseListener(new MouseAdapter()  
+                {  
+                    public void mouseClicked(MouseEvent e)  
+                    {  
+                    
+                    	//JOptionPane.showMessageDialog(frame, "X= "+field.getFieldX()+" Y= "+ field.getFieldY());
+                    	selectField(field);
+                    }  
+                }); 
             }
         }
         setGame(null);
@@ -52,6 +64,7 @@ public class GrilleView {
                 }
                 fields[y][x].setBackground(Color.WHITE);
                 fields[y][x].setNumber(tmp, false);
+                fields[y][x].setEditable( tmp == 0 );
             }
         }
     }
@@ -61,6 +74,31 @@ public class GrilleView {
         for(int i=1; i <=9; i++) {
             JButton button = new JButton("" + i + "");
             buttonPanel.add(button);
+            button.addActionListener(e -> putNumber( Integer.parseInt(button.getText() )));
         }
+        JButton buttonEffacer = new JButton("Effacer");
+        buttonPanel.add(buttonEffacer);
+        buttonEffacer.addActionListener(e -> selectedField.setNumber(0, true));
+        
+    }
+    
+    public void selectField(Field field) {
+    	if(field.isEditable()) {
+    	
+	    	if (selectedField !=null) {
+	    		selectedField.setBackground(Color.WHITE);
+	    	}
+	    	
+	    	
+	    	field.setBackground(Color.ORANGE);
+	    	selectedField = field;
+    	}
+    	
+    }
+    
+    public void putNumber(int number) {
+    	if (selectedField !=null) {
+    		selectedField.setNumber(number, true);
+    	}
     }
 }
