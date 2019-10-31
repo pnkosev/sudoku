@@ -2,6 +2,8 @@ package sudoku.view;
 
 import javax.swing.*;
 
+import sudoku.service.HallOfFame;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,10 +24,16 @@ public class GrilleView {
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
+	private String niveauDifficulte;
 
-	public GrilleView(JFrame frame, int[][] grilleSolution, int[][] grilleJoueur) {
+	
+	
+
+	public GrilleView(JFrame frame, int[][] grilleSolution, int[][] grilleJoueur, String niveauDifficulte) {
 		this.grilleSolution = grilleSolution;
 		this.grilleJoueur = grilleJoueur;
+		this.niveauDifficulte = niveauDifficulte;
+
 		grillePanel = new JPanel(new GridLayout(3, 3));
 		panels = new JPanel[3][3];
 
@@ -83,31 +91,18 @@ public class GrilleView {
 			}
 		}
 	}
-	
-	private String miseAJourTimer() {
-		int m = 0;
-		int s = 0;
-		if (secondes < 60) {
-			s = secondes;
-		} else {
-			s = secondes % 60;
-			m = secondes / 60;
-		}
-		
-		
-		return String.format("%d:%d", m, s);
-	}
-	
-	public void initTimer(){
+
+	public void initTimer() {
 		this.timer = new Timer(1000, e -> {
 			this.secondes++;
-			this.timerAffichage.setText(timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60));
+			this.timerAffichage
+					.setText(timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60));
 		});
 		this.timer.start();
 	}
-	
+
 	public void initHeader() {
-		this.headerPanel =new JPanel(new FlowLayout(10));
+		this.headerPanel = new JPanel(new FlowLayout(10));
 		JCheckBox aideBox = new JCheckBox();
 		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
 		aideBox.addActionListener(e -> {
@@ -121,12 +116,28 @@ public class GrilleView {
 		this.timerAffichage = new JLabel();
 		this.headerPanel.add(timerAffichage);
 	}
-	
+
 	public void initButtons() {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
-		buttonValider.addActionListener(e -> estGrilleValide());
+		buttonValider.addActionListener(e -> {
+			this.timer.stop();
+			HallOfFame hof = new HallOfFame();
+
+			int index = hof.verifTemps(niveauDifficulte, secondes);
+			if (index != -1) {
+
+				String nom = (String) JOptionPane.showInputDialog(frame, "Bravo! Veuillez entrer votre nom: ",
+						"Hall of Fame", JOptionPane.PLAIN_MESSAGE);
+
+				hof.modifFichier(nom, secondes, index);
+				HallOfFameView hofVueFameView = new HallOfFameView(hof.getListeHOF());
+			}
+//			if (estGrilleValide()) {
+//				
+//			}
+		});
 
 		for (int i = 1; i <= 9; i++) {
 			JButton button = new JButton("" + i + "");
@@ -183,7 +194,7 @@ public class GrilleView {
 	}
 
 	public boolean estGrilleValide() {
-		
+
 		if (estGrillePleine()) {
 			boolean estValide = true;
 

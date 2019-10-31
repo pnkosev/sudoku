@@ -25,20 +25,8 @@ public class SudokuController {
     	
     	this.grilleJoueur = generateurGrilleJoueur.getGrilleJoueur();
     	
-        this.view = new GrilleView(frame, grilleSolution,grilleJoueur);
-           	
-    	
-    	
+        this.view = new GrilleView(frame, grilleSolution, grilleJoueur, niveauDifficulte);
         
         this.view.setGame(grilleJoueur);
-        
-        // test validation grille
-        //estGrilleValide();
     }
-
-   
-
-//    public boolean estCaseValide() {
-//		
-//	}
 }
