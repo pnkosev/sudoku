@@ -2,10 +2,8 @@ package sudoku;
 
 import sudoku.controller.HelpController;
 import sudoku.controller.SudokuController;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -13,10 +11,11 @@ import java.awt.event.KeyEvent;
  * Main class of program.
  */
 public class App {
+
     private JFrame main;
     private SudokuController sudokuCtl;
     private String niveauDifficulteString ="intermediaire";
-    
+
     public App() {
         main = new JFrame("Sudoku");
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -118,11 +117,10 @@ public class App {
      * @param args Command line arguments.
      */
     public static void main(String[] args) {
-        // Use System Look and Feel
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            new App();
+            SwingUtilities.invokeLater(App::new);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
