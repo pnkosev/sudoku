@@ -1,32 +1,44 @@
 package sudoku.controller;
 
+import sudoku.service.GenerateurGrilleJoueur;
+import sudoku.service.GenerateurGrilleSolution;
 import sudoku.view.GrilleView;
 
 import javax.swing.*;
-import java.util.Random;
 
 public class SudokuController {
-    JFrame frame;
-
+	private JFrame frame;
+    private GrilleView view;
+    private GenerateurGrilleSolution generateurGrilleSolution;
+    private GenerateurGrilleJoueur generateurGrilleJoueur;
+    private int[][] grilleSolution;
+    private int[][] grilleJoueur;
 
     public SudokuController(JFrame frame) {
         this.frame = frame;
+        this.generateurGrilleSolution = new GenerateurGrilleSolution();
     }
 
-    public void newGrille() {
-        GrilleView view = new GrilleView(frame);
-        view.setGame(getRandomData());
+    public void newGrille(String niveauDifficulte) {
+    	this.grilleSolution = this.generateurGrilleSolution.getGrilleSolution();
+    	this.generateurGrilleJoueur = new GenerateurGrilleJoueur(grilleSolution, niveauDifficulte);
+    	
+    	this.grilleJoueur = generateurGrilleJoueur.getGrilleJoueur();
+    	
+        this.view = new GrilleView(frame, grilleSolution,grilleJoueur);
+           	
+    	
+    	
+        
+        this.view.setGame(grilleJoueur);
+        
+        // test validation grille
+        //estGrilleValide();
     }
 
-    public int[][] getRandomData() {
-        int [][] data = new int[9][9];
-        Random rand = new Random();
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
-                data[y][x] = rand.nextInt(10) ;
-            }
-        }
+   
 
-        return data;
-    }
+//    public boolean estCaseValide() {
+//		
+//	}
 }
