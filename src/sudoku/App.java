@@ -8,15 +8,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.beans.EventSetDescriptor;
 
 /**
  * Main class of program.
  */
 public class App {
+
     private JFrame main;
     private SudokuController sudokuCtl;
     private String niveauDifficulteString ="intermediaire";
-    
+
     public App() {
         main = new JFrame("Sudoku");
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,7 +43,7 @@ public class App {
         JMenuBar menuBar = new JMenuBar();
         // 1st menu & items
         menu = new JMenu("Jeu");
-        menuItem = new JMenuItem("Nouveau", KeyEvent.VK_N);
+        menuItem = new JMenuItem("Nouveau", KeyEvent.VK_0);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK));
         menuItem.addActionListener(event -> sudokuCtl.newGrille(niveauDifficulteString));
         menu.add(menuItem);
@@ -118,11 +120,10 @@ public class App {
      * @param args Command line arguments.
      */
     public static void main(String[] args) {
-        // Use System Look and Feel
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            new App();
+            SwingUtilities.invokeLater(App::new);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
