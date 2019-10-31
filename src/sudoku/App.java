@@ -2,13 +2,10 @@ package sudoku;
 
 import sudoku.controller.HelpController;
 import sudoku.controller.SudokuController;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.beans.EventSetDescriptor;
 
 /**
  * Main class of program.
@@ -43,7 +40,7 @@ public class App {
         JMenuBar menuBar = new JMenuBar();
         // 1st menu & items
         menu = new JMenu("Jeu");
-        menuItem = new JMenuItem("Nouveau", KeyEvent.VK_0);
+        menuItem = new JMenuItem("Nouveau", KeyEvent.VK_N);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK));
         menuItem.addActionListener(event -> sudokuCtl.newGrille(niveauDifficulteString));
         menu.add(menuItem);
