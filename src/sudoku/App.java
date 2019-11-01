@@ -2,10 +2,8 @@ package sudoku;
 
 import sudoku.controller.HelpController;
 import sudoku.controller.SudokuController;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -13,11 +11,12 @@ import java.awt.event.KeyEvent;
  * Main class of program.
  */
 public class App {
+
     private JFrame main;
     private SudokuController sudokuCtl;
     private String niveauDifficulteString ="intermediaire";
-    
-    
+
+
     public App() {
         main = new JFrame("Sudoku");
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,6 +36,7 @@ public class App {
     public JMenuBar createMenuBar() {
         JMenu menu;
         JMenuItem menuItem;
+        JRadioButtonMenuItem menuRadioItem;
         // create menu bar
         JMenuBar menuBar = new JMenuBar();
         // 1st menu & items
@@ -55,29 +55,42 @@ public class App {
         
         // create niveau
         menu = new JMenu("Niveau");
-        menuItem =new JMenuItem("Débutant", KeyEvent.VK_D);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_DOWN_MASK));
-        menuItem.addActionListener(event -> {
+        // ButtonGroup permet de gérer  la sélection d'un seul bouton radio
+        ButtonGroup radioGroup =  new ButtonGroup();
+
+        menuRadioItem = new JRadioButtonMenuItem("Débutant");
+        menuRadioItem.setMnemonic(KeyEvent.VK_D);
+        menuRadioItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_DOWN_MASK));
+
+        menuRadioItem.addActionListener(event -> {
         	niveauDifficulteString = "debutant";
         	sudokuCtl.newGrille(niveauDifficulteString);
         });
-        menu.add(menuItem);
-        menuItem =new JMenuItem("Intermédiaire", KeyEvent.VK_I);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_DOWN_MASK));
-        menuItem.addActionListener(event -> {
+        radioGroup.add(menuRadioItem);
+        menu.add(menuRadioItem);
+
+        menuRadioItem =new JRadioButtonMenuItem("Intermédiaire");
+        menuRadioItem.setMnemonic( KeyEvent.VK_I);
+        menuRadioItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_DOWN_MASK));
+        // Sélection par défaut
+        menuRadioItem.setSelected(true);
+        menuRadioItem.addActionListener(event -> {
         	niveauDifficulteString ="intermediaire";
         	sudokuCtl.newGrille(niveauDifficulteString);
         
         });
-                
-        menu.add(menuItem);
-        menuItem =new JMenuItem("Expert", KeyEvent.VK_E);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_DOWN_MASK));
-        menuItem.addActionListener(event -> {
+        radioGroup.add(menuRadioItem);
+        menu.add(menuRadioItem);
+
+        menuRadioItem =new JRadioButtonMenuItem("Expert");
+        menuRadioItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.ALT_DOWN_MASK));
+        menuRadioItem.addActionListener(event -> {
         	niveauDifficulteString="expert";
         	sudokuCtl.newGrille(niveauDifficulteString);	
         });
-        menu.add(menuItem);
+
+        radioGroup.add(menuRadioItem);
+        menu.add(menuRadioItem);
         
         // add to menu bar
         menuBar.add(menu);
@@ -105,11 +118,10 @@ public class App {
      * @param args Command line arguments.
      */
     public static void main(String[] args) {
-        // Use System Look and Feel
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            new App();
+            SwingUtilities.invokeLater(App::new);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -5,11 +5,10 @@ import sudoku.view.RulesView;
 
 import javax.swing.*;
 
-public class HelpController {
-    JFrame frame;
+public class HelpController extends AbstractController{
 
     public HelpController(JFrame frame) {
-        this.frame = frame;
+        super(frame);
     }
 
     public void rules() {
