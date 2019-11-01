@@ -98,6 +98,7 @@ public class GrilleView {
 		this.headerPanel = new JPanel(new FlowLayout(10));
 		JCheckBox aideBox = new JCheckBox();
 		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
+		aideboxJLabel.setLabelFor(aideBox);
 		aideBox.addActionListener(e -> {
 			avecAide = aideBox.isSelected();
 		});
@@ -113,24 +114,11 @@ public class GrilleView {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
-//		buttonValider.addActionListener(e -> controller.validateGrid());
 		buttonValider.addActionListener(e -> {
 			this.timer.stop();
-			HallOfFame hof = new HallOfFame();
-
-			int index = hof.verifTemps(niveauDifficulte, secondes);
-			if (index != -1) {
-
-				String nom = (String) JOptionPane.showInputDialog(controller.getFrame(), "Bravo! Veuillez entrer votre nom: ",
-						"Hall of Fame", JOptionPane.PLAIN_MESSAGE);
-
-				hof.modifFichier(nom, secondes, index);
-				HallOfFameView hofVueFameView = new HallOfFameView(hof.getListeHOF());
-			}
-//			if (estGrilleValide()) {
-//
-//			}
+			controller.validateGrid(secondes);
 		});
+
 		for (int i = 1; i <= 9; i++) {
 			JButton button = new JButton("" + i + "");
 			buttonPanel.add(button);
