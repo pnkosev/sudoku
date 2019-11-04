@@ -1,0 +1,9 @@
+debutant,Olivier,1222
+debutant,Nikolay,1422
+debutant,Jean-Gaël,1622
+intermediaire,Nikolaï,2210
+intermediaire,Konstantin,2609
+intermediaire,Jean-Gaël,2810
+expert,Jean-Gaël,1115
+expert,Konstantin,1333
+expert,Konstantin,1543

@@ -1,7 +1,6 @@
 package sudoku.view;
-
 import sudoku.controller.SudokuController;
-
+import sudoku.service.HallOfFame;
 import javax.swing.*;
 
 import java.awt.*;
@@ -23,10 +22,14 @@ public class GrilleView {
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
+	private String niveauDifficulte;
 
 	public GrilleView(SudokuController controller) {
 		this.controller = controller;
 
+
+	public GrilleView(SudokuController controller) {
+		this.controller = controller;
 		grillePanel = new JPanel(new GridLayout(3, 3));
 		panels = new JPanel[3][3];
 
@@ -82,33 +85,21 @@ public class GrilleView {
 			}
 		}
 	}
-	
-	private String miseAJourTimer() {
-		int m = 0;
-		int s = 0;
-		if (secondes < 60) {
-			s = secondes;
-		} else {
-			s = secondes % 60;
-			m = secondes / 60;
-		}
-		
-		
-		return String.format("%d:%d", m, s);
-	}
-	
-	public void initTimer(){
+
+	public void initTimer() {
 		this.timer = new Timer(1000, e -> {
 			this.secondes++;
-			this.timerAffichage.setText(timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60));
+			this.timerAffichage
+					.setText(timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60));
 		});
 		this.timer.start();
 	}
-	
+
 	public void initHeader() {
-		this.headerPanel =new JPanel(new FlowLayout(10));
+		this.headerPanel = new JPanel(new FlowLayout(10));
 		JCheckBox aideBox = new JCheckBox();
 		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
+		aideboxJLabel.setLabelFor(aideBox);
 		aideBox.addActionListener(e -> {
 			avecAide = aideBox.isSelected();
 		});
@@ -124,7 +115,11 @@ public class GrilleView {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
-		buttonValider.addActionListener(e -> controller.validateGrid());
+
+		buttonValider.addActionListener(e -> {
+			this.timer.stop();
+			controller.validateGrid(secondes);
+		});
 
 		for (int i = 1; i <= 9; i++) {
 			JButton button = new JButton("" + i + "");
