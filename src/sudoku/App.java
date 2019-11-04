@@ -2,7 +2,13 @@ package sudoku;
 
 import sudoku.controller.HelpController;
 import sudoku.controller.SudokuController;
+import sudoku.service.HallOfFame;
+import sudoku.view.HallOfFameView;
+
 import javax.swing.*;
+
+//import org.graalvm.compiler.lir.StandardOp.ImplicitNullCheck;
+
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -15,7 +21,7 @@ public class App {
     private JFrame main;
     private SudokuController sudokuCtl;
     private String niveauDifficulteString ="intermediaire";
-
+   
     public App() {
         main = new JFrame("Sudoku");
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -23,7 +29,7 @@ public class App {
         jPanel.setLayout(new BorderLayout());
         jPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 10));
         main.setJMenuBar(createMenuBar());
-        main.setSize(600, 600);
+        main.setSize(700, 600);
         //main.pack();
         main.setLocationRelativeTo(null);
         sudokuCtl = new SudokuController(main);
@@ -97,6 +103,13 @@ public class App {
         // 2nd menu and items
         HelpController ctl = new HelpController(main);
         menu = new JMenu("Aide");
+        menuItem = new JMenuItem("Table des Scores", KeyEvent.VK_T);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+        	HallOfFame hOfFame = new HallOfFame();
+        	new HallOfFameView(hOfFame.getListeHOF());
+        });
+        menu.add(menuItem);
         menuItem = new JMenuItem("Régles", KeyEvent.VK_R);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
         menuItem.addActionListener(event -> ctl.rules());

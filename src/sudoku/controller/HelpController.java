@@ -1,7 +1,9 @@
 package sudoku.controller;
 
+
 import sudoku.view.AboutView;
 import sudoku.view.RulesView;
+
 
 import javax.swing.*;
 
@@ -18,4 +20,6 @@ public class HelpController extends AbstractController{
     public void about(){
         new AboutView(frame);
     }
+   
+   
 }

@@ -1,6 +1,5 @@
 package sudoku.view;
 import sudoku.controller.SudokuController;
-import sudoku.service.HallOfFame;
 import javax.swing.*;
 
 import java.awt.*;
@@ -22,10 +21,6 @@ public class GrilleView {
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
-	private String niveauDifficulte;
-
-	public GrilleView(SudokuController controller) {
-		this.controller = controller;
 
 
 	public GrilleView(SudokuController controller) {
@@ -54,6 +49,7 @@ public class GrilleView {
 				});
 			}
 		}
+		
 		setGame(null);
 		initHeader();
 		initButtons();
@@ -85,6 +81,25 @@ public class GrilleView {
 			}
 		}
 	}
+	
+	public void setGame(int[][] initiale, int[][] actuelle) {
+		for (int y = 0; y < 9; y++) {
+			for (int x = 0; x < 9; x++) {
+				fields[y][x].setBackground(Color.WHITE);
+				if (initiale[y][x] != 0) {
+					fields[y][x].setNumber(actuelle[y][x], false);
+					fields[y][x].setEditable(false);
+				} else {
+					fields[y][x].setNumber(actuelle[y][x], true);
+					fields[y][x].setEditable(true);
+				}
+				
+				if (actuelle[y][x] != initiale[y][x]) {
+					fields[y][x].setNumber(actuelle[y][x], true);
+				}
+			}
+		}
+	}
 
 	public void initTimer() {
 		this.timer = new Timer(1000, e -> {
@@ -96,19 +111,22 @@ public class GrilleView {
 	}
 
 	public void initHeader() {
-		this.headerPanel = new JPanel(new FlowLayout(10));
+		this.headerPanel = new JPanel(new BorderLayout());
 		JCheckBox aideBox = new JCheckBox();
 		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
 		aideboxJLabel.setLabelFor(aideBox);
+		
 		aideBox.addActionListener(e -> {
 			avecAide = aideBox.isSelected();
 		});
-		this.headerPanel.add(aideBox);
+		
+		this.headerPanel.add(aideBox, BorderLayout.WEST);
 		this.headerPanel.add(aideboxJLabel);
+		
 		timeFormatter = new DecimalFormat("00");
 		initTimer();
 		this.timerAffichage = new JLabel();
-		this.headerPanel.add(timerAffichage);
+		this.headerPanel.add(timerAffichage, BorderLayout.EAST);
 	}
 	
 	public void initButtons() {
@@ -129,7 +147,14 @@ public class GrilleView {
 		JButton buttonEffacer = new JButton("Effacer");
 		buttonPanel.add(buttonEffacer);
 		buttonEffacer.addActionListener(e -> putNumber(0));
+		
+		JButton buttonAnnuler = new JButton("Back");
+		buttonPanel.add(buttonAnnuler);
+		buttonAnnuler.addActionListener(e -> controller.goBack());
 
+		JButton buttonAvancer = new JButton("Forward");
+		buttonPanel.add(buttonAvancer);
+		buttonAvancer.addActionListener(e -> controller.goForward());
 	}
 
 	public void selectField(Field field) {

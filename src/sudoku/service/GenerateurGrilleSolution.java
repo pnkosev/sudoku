@@ -16,14 +16,13 @@ public class GenerateurGrilleSolution {
 		this.chiffresTestes = new HashSet<Integer>();
 		
 		boolean estGenere = generateur();
+		
 		while (!estGenere) {
 			estGenere = generateur();
 		}
-		//affichage();
 	}
 
 	private boolean generateur() {
-		boolean estResolu = true;
 		int compteur = 1;
 		
 		for (int ligne = 0; ligne < 9; ligne++) {
@@ -68,7 +67,7 @@ public class GenerateurGrilleSolution {
 			}
 		}
 		
-		return estResolu;
+		return true;
 	}
 
 	private boolean estLigneOk(int ligne, int chiffre) {
@@ -117,15 +116,6 @@ public class GenerateurGrilleSolution {
 	
 	private int generateurChiffreAleatoire() {
 		return this.chiffreAleatoire.nextInt(9) + 1;
-	}
-	
-	private void affichage() {
-		for (int i = 0; i < grilleSolution.length; i++) {
-			for (int j = 0; j < grilleSolution[i].length; j++) {
-				System.out.print(grilleSolution[i][j] + " ");
-			}
-			System.out.println();
-		}
 	}
 	
 	public int[][] getGrilleSolution() {

@@ -35,23 +35,25 @@ public class HallOfFameView {
 		okButton = new JButton("Ok");
 		
 		okButton.addActionListener(e -> hallOfFame.dispose());
-		for (String ligne: liste) {
+		for (int i = 0; i < liste.size(); i++) {
 			gbc.gridy++;
 
-			String[] table = ligne.split(",");
-
+			String[] table = liste.get(i).split(",");
 			niveau = table[0];
 			nom = table[1];
 			secondes = Integer.parseInt(table[2]);
-
-			niveauJPanel.add(new JLabel(niveau + " " + nom + " " + timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60)), gbc);
+			
+			if (i % 3 == 0) {
+				niveauJPanel.add(new JLabel(niveau.toUpperCase()), gbc);
+				gbc.gridy++;
+			}
+			niveauJPanel.add(new JLabel((i % 3 + 1) + ". " + nom + " " + timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60)), gbc);
 		}
 		
 		gbc.gridy++;
 		niveauJPanel.add(okButton, gbc);
 		
 		hallOfFame.add(niveauJPanel);
-		
 		hallOfFame.setVisible(true);
 	}
 }
