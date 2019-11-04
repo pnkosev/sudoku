@@ -1,6 +1,5 @@
 package sudoku.view;
 import sudoku.controller.SudokuController;
-import sudoku.service.HallOfFame;
 import javax.swing.*;
 
 import java.awt.*;
@@ -22,11 +21,6 @@ public class GrilleView {
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
-	private String niveauDifficulte;
-
-	public GrilleView(SudokuController controller) {
-		this.controller = controller;
-
 
 	public GrilleView(SudokuController controller) {
 		this.controller = controller;
