@@ -1,8 +1,6 @@
 package sudoku.view;
-
 import sudoku.controller.SudokuController;
 import sudoku.service.HallOfFame;
-
 import javax.swing.*;
 
 import java.awt.*;
@@ -29,6 +27,9 @@ public class GrilleView {
 	public GrilleView(SudokuController controller) {
 		this.controller = controller;
 
+
+	public GrilleView(SudokuController controller) {
+		this.controller = controller;
 		grillePanel = new JPanel(new GridLayout(3, 3));
 		panels = new JPanel[3][3];
 
@@ -114,6 +115,7 @@ public class GrilleView {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
+
 		buttonValider.addActionListener(e -> {
 			this.timer.stop();
 			controller.validateGrid(secondes);

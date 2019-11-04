@@ -16,7 +16,6 @@ public class App {
     private SudokuController sudokuCtl;
     private String niveauDifficulteString ="intermediaire";
 
-
     public App() {
         main = new JFrame("Sudoku");
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
