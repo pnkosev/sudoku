@@ -1,5 +1,5 @@
 package sudoku.view;
-
+import sudoku.controller.SudokuController;
 import javax.swing.*;
 
 import java.awt.*;
@@ -8,7 +8,8 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 public class GrilleView {
-	JFrame frame;
+	SudokuController controller;
+
 	JPanel grillePanel, buttonPanel, headerPanel;
 	private Field[][] fields; // Array of fields.
 	private JPanel[][] panels; // Panels holding the fields.
@@ -16,18 +17,13 @@ public class GrilleView {
 	Color vertValide = new Color(36, 182, 25);
 	private Field selectedField;
 	private boolean avecAide = false;
-	private int[][] grilleSolution;
-	private int[][] grilleJoueur;
 	private int secondes;
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
-	JButton buttonEffacer = new JButton("Effacer");
-	
-	public GrilleView(JFrame frame, int[][] grilleSolution, int[][] grilleJoueur) {
-		this.grilleSolution = grilleSolution;
-		this.grilleJoueur = grilleJoueur;
-		
+
+	public GrilleView(SudokuController controller) {
+		this.controller = controller;
 		grillePanel = new JPanel(new GridLayout(3, 3));
 		panels = new JPanel[3][3];
 
@@ -47,9 +43,6 @@ public class GrilleView {
 				panels[y / 3][x / 3].add(fields[y][x]);
 				field.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
-							buttonEffacer.setEnabled(true);
-						// JOptionPane.showMessageDialog(frame, "X= "+field.getFieldX()+" Y= "+
-						// field.getFieldY());
 						selectField(field);
 					}
 				});
@@ -58,6 +51,7 @@ public class GrilleView {
 		setGame(null);
 		initHeader();
 		initButtons();
+		JFrame frame = controller.getFrame();
 		frame.getContentPane().removeAll();
 		frame.add(headerPanel, BorderLayout.NORTH);
 		frame.add(grillePanel, BorderLayout.CENTER);
@@ -86,18 +80,18 @@ public class GrilleView {
 		}
 	}
 	public void setGameSaved(int[][] grilleInitiale, int[][] grilleSaved ) {
-		
+
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
 				fields[y][x].setBackground(Color.WHITE);
-				if(grilleInitiale[y][x] != 0) {					
+				if(grilleInitiale[y][x] != 0) {
 					fields[y][x].setNumber(grilleSaved[y][x], false);
-					fields[y][x].setEditable(false);					
+					fields[y][x].setEditable(false);
 				}
-				else {					
+				else {
 					fields[y][x].setNumber(grilleSaved[y][x], true);
-					fields[y][x].setEditable(true);	
-				}				
+					fields[y][x].setEditable(true);
+				}
 			}
 		}
 	}
@@ -118,18 +112,19 @@ public class GrilleView {
 	public void initTimer(){
 		this.timer = new Timer(1000, e -> {
 			this.secondes++;
-			this.timerAffichage.setText(timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60));
+			this.timerAffichage
+					.setText(timeFormatter.format(secondes / 60) + ":" + timeFormatter.format(secondes % 60));
 		});
 		this.timer.start();
 	}
-	
+
 	public void initHeader() {
-		this.headerPanel =new JPanel(new FlowLayout(10));
+		this.headerPanel = new JPanel(new FlowLayout(10));
 		JCheckBox aideBox = new JCheckBox();
 		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
+		aideboxJLabel.setLabelFor(aideBox);
 		aideBox.addActionListener(e -> {
-			boolean estCochee = aideBox.isSelected();
-			avecAide = estCochee ? true : false;
+			avecAide = aideBox.isSelected();
 		});
 		this.headerPanel.add(aideBox);
 		this.headerPanel.add(aideboxJLabel);
@@ -143,29 +138,26 @@ public class GrilleView {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
-		buttonValider.addActionListener(e -> estGrilleValide());
+
+		buttonValider.addActionListener(e -> {
+			this.timer.stop();
+			controller.validateGrid(secondes);
+		});
 
 		for (int i = 1; i <= 9; i++) {
 			JButton button = new JButton("" + i + "");
 			buttonPanel.add(button);
 			button.addActionListener(e -> putNumber(Integer.parseInt(button.getText())));
 		}
-		//JButton buttonEffacer = new JButton("Effacer");
+		JButton buttonEffacer = new JButton("Effacer");
 		buttonPanel.add(buttonEffacer);
-		//if (selectedField!=null) {
-				
-			buttonEffacer.addActionListener(e -> selectedField.setNumber(0, true));
-			buttonEffacer.setEnabled(false);
-			//buttonEffacer.setVisible(false);
-		//}	
+		buttonEffacer.addActionListener(e -> putNumber(0));
 
 	}
 
 	public void selectField(Field field) {
-
-		
 		if (field.isEditable()) {
-			
+
 			if (selectedField != null) {
 				//selectedField.setBackground(Color.WHITE);
 				selectedField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -180,52 +172,8 @@ public class GrilleView {
 	public void putNumber(int number) {
 		if (selectedField != null) {
 			selectedField.setNumber(number, true);
-			int ligne = selectedField.getFieldY();
-			int col = selectedField.getFieldX();
-			grilleJoueur[ligne][col] = number;
-			if (avecAide) {
-				if (grilleSolution[ligne][col] != number) {
-					mettreEnErreur(ligne, col);
-				} else {
-					mettreEnValide(ligne, col);
-				}
-			}
+			controller.setUserNumber(number, selectedField.getFieldY(), selectedField.getFieldX(), avecAide);
 		}
-	}
-
-	public boolean estGrillePleine() {
-
-		for (int ligne = 0; ligne < grilleJoueur.length; ligne++) {
-			for (int col = 0; col < grilleJoueur[ligne].length; col++) {
-				if (grilleJoueur[ligne][col] == 0) {
-
-					return false;
-				}
-			}
-		}
-		return true;
-
-	}
-
-	public boolean estGrilleValide() {
-		
-		if (estGrillePleine()) {
-			boolean estValide = true;
-
-			for (int ligne = 0; ligne < grilleJoueur.length; ligne++) {
-				for (int col = 0; col < grilleJoueur[ligne].length; col++) {
-					if (grilleJoueur[ligne][col] != grilleSolution[ligne][col]) {
-						this.mettreEnErreur(ligne, col);
-						estValide = false;
-					} else {
-						this.mettreEnValide(ligne, col);
-					}
-				}
-			}
-
-			return estValide;
-		}
-		return false;
 	}
 
 	public void mettreEnErreur(int ligne, int col) {
@@ -235,7 +183,7 @@ public class GrilleView {
 	public void mettreEnValide(int ligne, int col) {
 		fields[ligne][col].setForeground(this.vertValide);
 	}
-	
+
 	public int getSecondes() {
 		return this.secondes;
 	}

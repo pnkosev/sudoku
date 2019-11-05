@@ -1,0 +1,9 @@
+debutant,xxx,81
+debutant,Nikolay,1422
+debutant,Jean-Gaël,1622
+intermediaire,oliv,1
+intermediaire,gdhdgh,1
+intermediaire,qsdqsf,1
+expert,Jean-Gaël,1115
+expert,Konstantin,1333
+expert,Konstantin,1543
