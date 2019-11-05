@@ -34,12 +34,16 @@ public class App {
         main.setLocationRelativeTo(null);
 
         sudokuCtl = new SudokuController(main);
+        
         if(!sudokuCtl.isThereASave()) {
         	sudokuCtl.newGrille(niveauDifficulteString);
+        	sudokuCtl.setIsGameSaved(false);
         }else {
         	sudokuCtl.lireSauvegarde();
         	niveauDifficulteString = sudokuCtl.getNiveauDifficulte();
+        	sudokuCtl.setIsGameSaved(true);
         }
+        
         main.setJMenuBar(createMenuBar());
         main.setIconImage(new ImageIcon("icon.png").getImage());
 

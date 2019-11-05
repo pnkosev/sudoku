@@ -21,6 +21,8 @@ public class GrilleView {
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
+	private boolean isBackEnabled;
+	private boolean isForwardEnabled;
 
 	public GrilleView(SudokuController controller) {
 		this.controller = controller;
@@ -81,10 +83,11 @@ public class GrilleView {
 		}
 	}
 
-	public void setGame(int[][] initiale, int[][] actuelle) {
+	public void setGameBackAndForth(int[][] initiale, int[][] actuelle) {
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
 				fields[y][x].setBackground(Color.WHITE);
+				
 				if (initiale[y][x] != 0) {
 					fields[y][x].setNumber(actuelle[y][x], false);
 					fields[y][x].setEditable(false);
@@ -99,9 +102,28 @@ public class GrilleView {
 			}
 		}
 	}
+	
+	public void setGameBackAndForth(int[][] initialeApresSauvegarde, int[][] initialeAvantSauvegarde,int[][] actuelle) {
+		for (int y = 0; y < 9; y++) {
+			for (int x = 0; x < 9; x++) {
+				fields[y][x].setBackground(Color.WHITE);
+				
+				if (initialeApresSauvegarde[y][x] != 0 && initialeApresSauvegarde[y][x] == initialeAvantSauvegarde[y][x]) {
+					fields[y][x].setNumber(actuelle[y][x], false);
+					fields[y][x].setEditable(false);
+				} else {
+					fields[y][x].setNumber(actuelle[y][x], true);
+					fields[y][x].setEditable(true);
+				}
+
+				if (actuelle[y][x] != initialeApresSauvegarde[y][x]) {
+					fields[y][x].setNumber(actuelle[y][x], true);
+				}
+			}
+		}
+	}
 
     public void setGameSaved(int[][] grilleInitiale, int[][] grilleSaved ) {
-
         for (int y = 0; y < 9; y++) {
             for (int x = 0; x < 9; x++) {
                 fields[y][x].setBackground(Color.WHITE);
@@ -149,6 +171,23 @@ public class GrilleView {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
+		
+		JButton buttonAnnuler = new JButton("Back");
+		JButton buttonAvancer = new JButton("Forward");
+		
+		buttonAnnuler.setEnabled(isBackEnabled);
+		buttonAnnuler.addActionListener(e -> {
+			controller.goBack();
+			buttonAvancer.setEnabled(isForwardEnabled);
+			buttonAnnuler.setEnabled(isBackEnabled);
+		});
+
+		buttonAvancer.setEnabled(isBackEnabled);
+		buttonAvancer.addActionListener(e -> {
+			controller.goForward();
+			buttonAvancer.setEnabled(isForwardEnabled);
+			buttonAnnuler.setEnabled(isBackEnabled);
+		});
 
 		buttonValider.addActionListener(e -> {
 			this.timer.stop();
@@ -158,19 +197,17 @@ public class GrilleView {
 		for (int i = 1; i <= 9; i++) {
 			JButton button = new JButton("" + i + "");
 			buttonPanel.add(button);
-			button.addActionListener(e -> putNumber(Integer.parseInt(button.getText())));
+			button.addActionListener(e -> {
+				buttonAnnuler.setEnabled(true);
+				putNumber(Integer.parseInt(button.getText()));
+			});
 		}
 		JButton buttonEffacer = new JButton("Effacer");
 		buttonPanel.add(buttonEffacer);
 		buttonEffacer.addActionListener(e -> putNumber(0));
 
-		JButton buttonAnnuler = new JButton("Back");
 		buttonPanel.add(buttonAnnuler);
-		buttonAnnuler.addActionListener(e -> controller.goBack());
-
-		JButton buttonAvancer = new JButton("Forward");
 		buttonPanel.add(buttonAvancer);
-		buttonAvancer.addActionListener(e -> controller.goForward());
 	}
 
 	public void selectField(Field field) {
@@ -205,7 +242,16 @@ public class GrilleView {
 	public int getSecondes() {
 		return this.secondes;
 	}
+	
 	public void setSecondes(int secondes) {
 		this.secondes = secondes;
+	}
+
+	public void setIsBackEnabled(boolean isEnabled) {
+		this.isBackEnabled = isEnabled;
+	}
+	
+	public void setIsForwardEnabled(boolean isEnabled) {
+		this.isForwardEnabled = isEnabled;
 	}
 }
