@@ -14,12 +14,11 @@ public class GenerateurGrilleSolution {
 		this.chiffreAleatoire = new Random();
 		this.uniqueSetChiffres = new HashSet<Integer>();
 		this.chiffresTestes = new HashSet<Integer>();
-		
+
 		boolean estGenere = generateur();
 		while (!estGenere) {
 			estGenere = generateur();
 		}
-		//affichage();
 	}
 
 	private boolean generateur() {
@@ -119,7 +118,7 @@ public class GenerateurGrilleSolution {
 		return this.chiffreAleatoire.nextInt(9) + 1;
 	}
 	
-	private void affichage() {
+	public void affichage() {
 		for (int i = 0; i < grilleSolution.length; i++) {
 			for (int j = 0; j < grilleSolution[i].length; j++) {
 				System.out.print(grilleSolution[i][j] + " ");
@@ -130,5 +129,12 @@ public class GenerateurGrilleSolution {
 	
 	public int[][] getGrilleSolution() {
 		return this.grilleSolution;
+	}
+
+	public static void main(String[] args) {
+		long startTime = System.currentTimeMillis();
+		GenerateurGrilleSolution instance = new GenerateurGrilleSolution();
+		System.out.println(System.currentTimeMillis() - startTime);
+		instance.affichage();
 	}
 }
