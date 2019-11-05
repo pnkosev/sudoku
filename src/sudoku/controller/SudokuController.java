@@ -5,6 +5,14 @@ import sudoku.service.GenerateurGrilleSolution;
 import sudoku.service.HallOfFame;
 import sudoku.view.GrilleView;
 import sudoku.view.HallOfFameView;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -22,6 +30,7 @@ public class SudokuController extends AbstractController {
     private int[][] grilleJoueur;
     private int[][] grilleInitiale;
     private String niveauDifficulte;
+    private int[][] grilleJoueurInitiale = new int[9][9];
     List<int[][]> historiqueGrilles;
     ArrayDeque<int[][]> forwardGrilles;
 
@@ -30,20 +39,29 @@ public class SudokuController extends AbstractController {
         this.generateurGrilleSolution = new GenerateurGrilleSolution();
     }
 
+    public String getNiveauDifficulte() {
+        return niveauDifficulte;
+    }
+
+    public void setNiveauDifficulte(String niveauDifficulte) {
+        this.niveauDifficulte = niveauDifficulte;
+    }
+
     public void newGrille(String niveauDifficulte) {
         this.niveauDifficulte = niveauDifficulte;
         this.historiqueGrilles = new ArrayList<int[][]>();
         this.forwardGrilles = new ArrayDeque<int[][]>();
-        
+        this.grilleInitiale = new int[9][9];
+
         this.grilleSolution = this.generateurGrilleSolution.getGrilleSolution();
         this.generateurGrilleJoueur = new GenerateurGrilleJoueur(grilleSolution, niveauDifficulte);
         this.grilleJoueur = generateurGrilleJoueur.getGrilleJoueur();
-        
-        this.grilleInitiale = new int[9][9];
-        for (int i = 0; i < grilleJoueur.length; i++) {
-			grilleInitiale[i] = Arrays.copyOf(grilleJoueur[i], grilleJoueur[i].length);
-		}
-        
+
+        for (int x = 0; x < 9; x++) {
+            grilleJoueurInitiale[x] = Arrays.copyOf(grilleJoueur[x], grilleJoueur[x].length);
+            grilleInitiale[i] = Arrays.copyOf(grilleJoueur[i], grilleJoueur[i].length);
+        }
+
         this.view = new GrilleView(this);
         this.view.setGame(grilleJoueur);
     }
@@ -101,7 +119,7 @@ public class SudokuController extends AbstractController {
     		historiqueGrilles.add(copyMatrix(this.grilleJoueur));
     	}
     	forwardGrilles.clear();
-    	
+
         grilleJoueur[line][column] = number;
         if (helpState) {
             if (!isValidNumber(number, line, column)) {
@@ -140,47 +158,125 @@ public class SudokuController extends AbstractController {
         }
     }
 
-	public void goBack() {
-		if (historiqueGrilles.size() != 0) {
-			int[][] ancienneGrille = historiqueGrilles.remove(historiqueGrilles.size() - 1);
-			
-			forwardGrilles.push(copyMatrix(grilleJoueur));
+    public void save(String niveauDifficulte ){
+        String msg = "Souhaitez-vous sauvegarder \nvotre progression avant de quitter?";
+        UIManager.put("OptionPane.noButtonText", "NON");
+        UIManager.put("OptionPane.yesButtonText", "OUI");
+        UIManager.put("OptionPane.okButtonText", "Quitter");
 
-			setGrilleJoueur(ancienneGrille);
-			
-			this.view.setGame(this.grilleInitiale, ancienneGrille);
-		}
-	}
+        int reponse = JOptionPane.showConfirmDialog(frame,
+                msg,
+                "Confirmation",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
 
-	public void goForward() {
-		if (forwardGrilles.size() != 0) {
-			int[][] forwardGrille = forwardGrilles.pop();
-			
-			historiqueGrilles.add(copyMatrix(grilleJoueur));
-			
-			setGrilleJoueur(forwardGrille);
-			
-			this.view.setGame(this.grilleInitiale, forwardGrille);
-		}
-	}
-	
-	
-	// copier une matrice
-	private int[][] copyMatrix(int[][] originalMatrix) {
-		int[][] newMatrix = new int[originalMatrix.length][originalMatrix[1].length];
-		
-		for (int i = 0; i < newMatrix.length; i++) {
-			newMatrix[i] = Arrays.copyOf(originalMatrix[i], originalMatrix[i].length);
-		}
-		
-		return newMatrix;
-	}
-	
-	
-	// mettre a jour la grilleJoueur
-	private void setGrilleJoueur(int[][] grilleVise) {
-		for (int i = 0; i < grilleJoueur.length; i++) {
-			this.grilleJoueur[i] = Arrays.copyOf(grilleVise[i], grilleVise[i].length);
-		}
-	}
+        if(reponse == JOptionPane.YES_OPTION ){
+            ArrayList<Object> listeGrillesToSave = new ArrayList<Object>();
+            listeGrillesToSave.add(grilleSolution);
+            listeGrillesToSave.add(grilleJoueur);
+            listeGrillesToSave.add(niveauDifficulte);
+            listeGrillesToSave.add(grilleJoueurInitiale);
+            listeGrillesToSave.add(view.getSecondes());
+            //listeGrillesToSave.add(this.view.getGrilleJoueurInitiale());
+            try
+            {
+                ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("savedGame.ser"));
+                output.writeObject(listeGrillesToSave);
+                output.close();
+            }
+
+            catch(IOException ex)
+            {
+                System.out.println("IOException is caught");
+            }
+            JOptionPane.showMessageDialog(frame, "Sauvegardé !");
+        }
+        System.exit(0);
+
+    }
+
+    public Boolean isThereASave() {
+        File f = new File("savedGame.ser");
+        if(f.exists() && !f.isDirectory())
+        {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public void lireSauvegarde() {
+        try
+        {
+            ObjectInputStream input = new ObjectInputStream(new FileInputStream("savedGame.ser"));
+            ArrayList<Object> grilles = (ArrayList<Object>)input.readObject();
+            this.grilleSolution = (int[][]) grilles.get(0);
+            this.grilleJoueur = (int[][]) grilles.get(1);
+            this.grilleJoueurInitiale = (int[][]) grilles.get(3);
+            setNiveauDifficulte((String) grilles.get(2));
+            System.out.println(Arrays.deepToString(grilleSolution));
+            System.out.println(Arrays.deepToString(grilleJoueur));
+            System.out.println(Arrays.deepToString(grilleJoueurInitiale));
+
+            //niveau
+            System.out.println(grilles.get(2));
+            this.view = new GrilleView(this);
+            this.view.setSecondes((int) grilles.get(4));
+            this.view.setGameSaved(grilleJoueurInitiale, grilleJoueur);
+            input.close();
+
+        }
+        catch(IOException ex)
+        {
+            System.out.println("IOException is caught");
+        } catch (ClassNotFoundException e) {
+
+            System.out.println("ClassNotFoundException is caught");
+        }
+
+    }
+
+    public void goBack() {
+        if (historiqueGrilles.size() != 0) {
+            int[][] ancienneGrille = historiqueGrilles.remove(historiqueGrilles.size() - 1);
+
+            forwardGrilles.push(copyMatrix(grilleJoueur));
+
+            setGrilleJoueur(ancienneGrille);
+
+            this.view.setGame(this.grilleInitiale, ancienneGrille);
+        }
+    }
+
+    public void goForward() {
+        if (forwardGrilles.size() != 0) {
+            int[][] forwardGrille = forwardGrilles.pop();
+
+            historiqueGrilles.add(copyMatrix(grilleJoueur));
+
+            setGrilleJoueur(forwardGrille);
+
+            this.view.setGame(this.grilleInitiale, forwardGrille);
+        }
+    }
+
+
+    // copier une matrice
+    private int[][] copyMatrix(int[][] originalMatrix) {
+        int[][] newMatrix = new int[originalMatrix.length][originalMatrix[1].length];
+
+        for (int i = 0; i < newMatrix.length; i++) {
+            newMatrix[i] = Arrays.copyOf(originalMatrix[i], originalMatrix[i].length);
+        }
+
+        return newMatrix;
+    }
+
+
+    // mettre a jour la grilleJoueur
+    private void setGrilleJoueur(int[][] grilleVise) {
+        for (int i = 0; i < grilleJoueur.length; i++) {
+            this.grilleJoueur[i] = Arrays.copyOf(grilleVise[i], grilleVise[i].length);
+        }
+    }
 }

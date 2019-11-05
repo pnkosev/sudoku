@@ -22,7 +22,6 @@ public class GrilleView {
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
 
-
 	public GrilleView(SudokuController controller) {
 		this.controller = controller;
 		grillePanel = new JPanel(new GridLayout(3, 3));
@@ -49,7 +48,7 @@ public class GrilleView {
 				});
 			}
 		}
-		
+
 		setGame(null);
 		initHeader();
 		initButtons();
@@ -81,7 +80,7 @@ public class GrilleView {
 			}
 		}
 	}
-	
+
 	public void setGame(int[][] initiale, int[][] actuelle) {
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
@@ -93,13 +92,30 @@ public class GrilleView {
 					fields[y][x].setNumber(actuelle[y][x], true);
 					fields[y][x].setEditable(true);
 				}
-				
+
 				if (actuelle[y][x] != initiale[y][x]) {
 					fields[y][x].setNumber(actuelle[y][x], true);
 				}
 			}
 		}
 	}
+
+    public void setGameSaved(int[][] grilleInitiale, int[][] grilleSaved ) {
+
+        for (int y = 0; y < 9; y++) {
+            for (int x = 0; x < 9; x++) {
+                fields[y][x].setBackground(Color.WHITE);
+                if(grilleInitiale[y][x] != 0) {
+                    fields[y][x].setNumber(grilleSaved[y][x], false);
+                    fields[y][x].setEditable(false);
+                }
+                else {
+                    fields[y][x].setNumber(grilleSaved[y][x], true);
+                    fields[y][x].setEditable(true);
+                }
+            }
+        }
+    }
 
 	public void initTimer() {
 		this.timer = new Timer(1000, e -> {
@@ -115,14 +131,14 @@ public class GrilleView {
 		JCheckBox aideBox = new JCheckBox();
 		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
 		aideboxJLabel.setLabelFor(aideBox);
-		
+
 		aideBox.addActionListener(e -> {
 			avecAide = aideBox.isSelected();
 		});
-		
+
 		this.headerPanel.add(aideBox, BorderLayout.WEST);
 		this.headerPanel.add(aideboxJLabel);
-		
+
 		timeFormatter = new DecimalFormat("00");
 		initTimer();
 		this.timerAffichage = new JLabel();
@@ -147,7 +163,7 @@ public class GrilleView {
 		JButton buttonEffacer = new JButton("Effacer");
 		buttonPanel.add(buttonEffacer);
 		buttonEffacer.addActionListener(e -> putNumber(0));
-		
+
 		JButton buttonAnnuler = new JButton("Back");
 		buttonPanel.add(buttonAnnuler);
 		buttonAnnuler.addActionListener(e -> controller.goBack());
@@ -161,10 +177,11 @@ public class GrilleView {
 		if (field.isEditable()) {
 
 			if (selectedField != null) {
-				selectedField.setBackground(Color.WHITE);
+				//selectedField.setBackground(Color.WHITE);
+				selectedField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 			}
-
-			field.setBackground(Color.ORANGE);
+			field.setBorder(BorderFactory.createLineBorder(Color.ORANGE,3));
+			//field.setBackground(Color.ORANGE);
 			selectedField = field;
 		}
 
@@ -183,5 +200,12 @@ public class GrilleView {
 
 	public void mettreEnValide(int ligne, int col) {
 		fields[ligne][col].setForeground(this.vertValide);
+	}
+
+	public int getSecondes() {
+		return this.secondes;
+	}
+	public void setSecondes(int secondes) {
+		this.secondes = secondes;
 	}
 }
