@@ -79,8 +79,37 @@ public class GrilleView {
 			}
 		}
 	}
+	public void setGameSaved(int[][] grilleInitiale, int[][] grilleSaved ) {
 
-	public void initTimer() {
+		for (int y = 0; y < 9; y++) {
+			for (int x = 0; x < 9; x++) {
+				fields[y][x].setBackground(Color.WHITE);
+				if(grilleInitiale[y][x] != 0) {
+					fields[y][x].setNumber(grilleSaved[y][x], false);
+					fields[y][x].setEditable(false);
+				}
+				else {
+					fields[y][x].setNumber(grilleSaved[y][x], true);
+					fields[y][x].setEditable(true);
+				}
+			}
+		}
+	}
+	private String miseAJourTimer() {
+		int m = 0;
+		int s = 0;
+		if (secondes < 60) {
+			s = secondes;
+		} else {
+			s = secondes % 60;
+			m = secondes / 60;
+		}
+		
+		
+		return String.format("%d:%d", m, s);
+	}
+	
+	public void initTimer(){
 		this.timer = new Timer(1000, e -> {
 			this.secondes++;
 			this.timerAffichage
@@ -130,10 +159,11 @@ public class GrilleView {
 		if (field.isEditable()) {
 
 			if (selectedField != null) {
-				selectedField.setBackground(Color.WHITE);
+				//selectedField.setBackground(Color.WHITE);
+				selectedField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 			}
-
-			field.setBackground(Color.ORANGE);
+			field.setBorder(BorderFactory.createLineBorder(Color.ORANGE,3));
+			//field.setBackground(Color.ORANGE);
 			selectedField = field;
 		}
 
@@ -152,5 +182,12 @@ public class GrilleView {
 
 	public void mettreEnValide(int ligne, int col) {
 		fields[ligne][col].setForeground(this.vertValide);
+	}
+
+	public int getSecondes() {
+		return this.secondes;
+	}
+	public void setSecondes(int secondes) {
+		this.secondes = secondes;
 	}
 }

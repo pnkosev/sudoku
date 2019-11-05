@@ -22,12 +22,18 @@ public class App {
         JPanel jPanel = (JPanel) main.getContentPane();
         jPanel.setLayout(new BorderLayout());
         jPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 10));
-        main.setJMenuBar(createMenuBar());
         main.setSize(600, 600);
-        //main.pack();
         main.setLocationRelativeTo(null);
+
         sudokuCtl = new SudokuController(main);
-        sudokuCtl.newGrille(niveauDifficulteString);
+        if(!sudokuCtl.isThereASave()) {
+        	sudokuCtl.newGrille(niveauDifficulteString);
+        }else {
+        	sudokuCtl.lireSauvegarde();
+        	niveauDifficulteString = sudokuCtl.getNiveauDifficulte();
+        }
+        main.setJMenuBar(createMenuBar());
+        main.setIconImage(new ImageIcon("icon.png").getImage());
 
         main.setVisible(true);
     }
@@ -44,9 +50,10 @@ public class App {
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK));
         menuItem.addActionListener(event -> sudokuCtl.newGrille(niveauDifficulteString));
         menu.add(menuItem);
+
         menuItem = new JMenuItem("Exit", KeyEvent.VK_X);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,InputEvent.ALT_DOWN_MASK));
-        menuItem.addActionListener(event -> System.exit(0));
+        menuItem.addActionListener(event -> sudokuCtl.save(niveauDifficulteString) );
         menu.add(menuItem);
         
         // add to menu bar
@@ -65,19 +72,24 @@ public class App {
         	niveauDifficulteString = "debutant";
         	sudokuCtl.newGrille(niveauDifficulteString);
         });
+        if(niveauDifficulteString.equals("debutant")) {
+            menuRadioItem.setSelected(true);
+        }
         radioGroup.add(menuRadioItem);
         menu.add(menuRadioItem);
 
         menuRadioItem =new JRadioButtonMenuItem("Intermédiaire");
         menuRadioItem.setMnemonic( KeyEvent.VK_I);
         menuRadioItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_DOWN_MASK));
-        // Sélection par défaut
-        menuRadioItem.setSelected(true);
         menuRadioItem.addActionListener(event -> {
         	niveauDifficulteString ="intermediaire";
         	sudokuCtl.newGrille(niveauDifficulteString);
         
         });
+
+        if(niveauDifficulteString.equals("intermediaire")) {
+            menuRadioItem.setSelected(true);
+        }
         radioGroup.add(menuRadioItem);
         menu.add(menuRadioItem);
 
@@ -87,6 +99,10 @@ public class App {
         	niveauDifficulteString="expert";
         	sudokuCtl.newGrille(niveauDifficulteString);	
         });
+
+        if(niveauDifficulteString.equals("expert")) {
+            menuRadioItem.setSelected(true);
+        }
 
         radioGroup.add(menuRadioItem);
         menu.add(menuRadioItem);
