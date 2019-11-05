@@ -22,10 +22,12 @@ public class GrilleView {
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
-
+	JButton buttonEffacer = new JButton("Effacer");
+	
 	public GrilleView(JFrame frame, int[][] grilleSolution, int[][] grilleJoueur) {
 		this.grilleSolution = grilleSolution;
 		this.grilleJoueur = grilleJoueur;
+		
 		grillePanel = new JPanel(new GridLayout(3, 3));
 		panels = new JPanel[3][3];
 
@@ -45,7 +47,7 @@ public class GrilleView {
 				panels[y / 3][x / 3].add(fields[y][x]);
 				field.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
-
+							buttonEffacer.setEnabled(true);
 						// JOptionPane.showMessageDialog(frame, "X= "+field.getFieldX()+" Y= "+
 						// field.getFieldY());
 						selectField(field);
@@ -83,7 +85,22 @@ public class GrilleView {
 			}
 		}
 	}
-	
+	public void setGameSaved(int[][] grilleInitiale, int[][] grilleSaved ) {
+		
+		for (int y = 0; y < 9; y++) {
+			for (int x = 0; x < 9; x++) {
+				fields[y][x].setBackground(Color.WHITE);
+				if(grilleInitiale[y][x] != 0) {					
+					fields[y][x].setNumber(grilleSaved[y][x], false);
+					fields[y][x].setEditable(false);					
+				}
+				else {					
+					fields[y][x].setNumber(grilleSaved[y][x], true);
+					fields[y][x].setEditable(true);	
+				}				
+			}
+		}
+	}
 	private String miseAJourTimer() {
 		int m = 0;
 		int s = 0;
@@ -133,20 +150,28 @@ public class GrilleView {
 			buttonPanel.add(button);
 			button.addActionListener(e -> putNumber(Integer.parseInt(button.getText())));
 		}
-		JButton buttonEffacer = new JButton("Effacer");
+		//JButton buttonEffacer = new JButton("Effacer");
 		buttonPanel.add(buttonEffacer);
-		buttonEffacer.addActionListener(e -> selectedField.setNumber(0, true));
+		//if (selectedField!=null) {
+				
+			buttonEffacer.addActionListener(e -> selectedField.setNumber(0, true));
+			buttonEffacer.setEnabled(false);
+			//buttonEffacer.setVisible(false);
+		//}	
 
 	}
 
 	public void selectField(Field field) {
+
+		
 		if (field.isEditable()) {
-
+			
 			if (selectedField != null) {
-				selectedField.setBackground(Color.WHITE);
+				//selectedField.setBackground(Color.WHITE);
+				selectedField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 			}
-
-			field.setBackground(Color.ORANGE);
+			field.setBorder(BorderFactory.createLineBorder(Color.ORANGE,3));
+			//field.setBackground(Color.ORANGE);
 			selectedField = field;
 		}
 
@@ -209,5 +234,12 @@ public class GrilleView {
 
 	public void mettreEnValide(int ligne, int col) {
 		fields[ligne][col].setForeground(this.vertValide);
+	}
+	
+	public int getSecondes() {
+		return this.secondes;
+	}
+	public void setSecondes(int secondes) {
+		this.secondes = secondes;
 	}
 }

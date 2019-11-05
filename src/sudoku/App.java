@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Main class of program.
@@ -28,9 +30,31 @@ public class App {
         //main.pack();
         main.setLocationRelativeTo(null);
         sudokuCtl = new SudokuController(main);
-        sudokuCtl.newGrille(niveauDifficulteString);
-
+        if(!sudokuCtl.isThereASave()) {
+        	sudokuCtl.newGrille(niveauDifficulteString);
+        }else {
+        	sudokuCtl.lireSauvegarde();        	
+        	System.out.println("lecture de la sauvegarde");
+        }
+        main.setIconImage(new ImageIcon("icon.png").getImage());
+       
         main.setVisible(true);
+        
+//        main.addWindowListener(new WindowAdapter() {
+//    		public void windowClosing(WindowEvent e) {
+//    			String msg = "Voulez-vous sauvegarder la partie avant de quitter?";
+//    			int reponse = JOptionPane.showConfirmDialog(main,
+//    	        		msg,
+//    	                "Confirmation",
+//    	                JOptionPane.YES_NO_OPTION,
+//    	                JOptionPane.QUESTION_MESSAGE);
+//    	        
+//    	        if(reponse == JOptionPane.YES_OPTION ){
+//    				
+//    				System.out.println("reponse = "+reponse);
+//    			}
+//    		}
+//    	});
     }
 
     public JMenuBar createMenuBar() {
@@ -44,9 +68,10 @@ public class App {
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK));
         menuItem.addActionListener(event -> sudokuCtl.newGrille(niveauDifficulteString));
         menu.add(menuItem);
+       
         menuItem = new JMenuItem("Exit", KeyEvent.VK_X);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,InputEvent.ALT_DOWN_MASK));
-        menuItem.addActionListener(event -> System.exit(0));
+        menuItem.addActionListener(event -> sudokuCtl.save(niveauDifficulteString) );
         menu.add(menuItem);
         
         // add to menu bar
