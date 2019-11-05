@@ -2,7 +2,13 @@ package sudoku;
 
 import sudoku.controller.HelpController;
 import sudoku.controller.SudokuController;
+import sudoku.service.HallOfFame;
+import sudoku.view.HallOfFameView;
+
 import javax.swing.*;
+
+//import org.graalvm.compiler.lir.StandardOp.ImplicitNullCheck;
+
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -22,16 +28,22 @@ public class App {
         JPanel jPanel = (JPanel) main.getContentPane();
         jPanel.setLayout(new BorderLayout());
         jPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 10));
-        main.setSize(600, 600);
+        main.setJMenuBar(createMenuBar());
+        main.setSize(700, 600);
+        //main.pack();
         main.setLocationRelativeTo(null);
 
         sudokuCtl = new SudokuController(main);
+        
         if(!sudokuCtl.isThereASave()) {
         	sudokuCtl.newGrille(niveauDifficulteString);
+        	sudokuCtl.setIsGameSaved(false);
         }else {
         	sudokuCtl.lireSauvegarde();
         	niveauDifficulteString = sudokuCtl.getNiveauDifficulte();
+        	sudokuCtl.setIsGameSaved(true);
         }
+        
         main.setJMenuBar(createMenuBar());
         main.setIconImage(new ImageIcon("icon.png").getImage());
 
@@ -113,6 +125,13 @@ public class App {
         // 2nd menu and items
         HelpController ctl = new HelpController(main);
         menu = new JMenu("Aide");
+        menuItem = new JMenuItem("Table des Scores", KeyEvent.VK_T);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK));
+        menuItem.addActionListener(event -> {
+        	HallOfFame hOfFame = new HallOfFame();
+        	new HallOfFameView(hOfFame.getListeHOF());
+        });
+        menu.add(menuItem);
         menuItem = new JMenuItem("Régles", KeyEvent.VK_R);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK));
         menuItem.addActionListener(event -> ctl.rules());

@@ -21,6 +21,8 @@ public class GrilleView {
 	private Timer timer;
 	private JLabel timerAffichage;
 	private DecimalFormat timeFormatter;
+	private boolean isBackEnabled;
+	private boolean isForwardEnabled;
 
 	public GrilleView(SudokuController controller) {
 		this.controller = controller;
@@ -48,6 +50,7 @@ public class GrilleView {
 				});
 			}
 		}
+
 		setGame(null);
 		initHeader();
 		initButtons();
@@ -79,37 +82,64 @@ public class GrilleView {
 			}
 		}
 	}
-	public void setGameSaved(int[][] grilleInitiale, int[][] grilleSaved ) {
 
+	public void setGameBackAndForth(int[][] initiale, int[][] actuelle) {
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 9; x++) {
 				fields[y][x].setBackground(Color.WHITE);
-				if(grilleInitiale[y][x] != 0) {
-					fields[y][x].setNumber(grilleSaved[y][x], false);
+				
+				if (initiale[y][x] != 0) {
+					fields[y][x].setNumber(actuelle[y][x], false);
 					fields[y][x].setEditable(false);
-				}
-				else {
-					fields[y][x].setNumber(grilleSaved[y][x], true);
+				} else {
+					fields[y][x].setNumber(actuelle[y][x], true);
 					fields[y][x].setEditable(true);
+				}
+
+				if (actuelle[y][x] != initiale[y][x]) {
+					fields[y][x].setNumber(actuelle[y][x], true);
 				}
 			}
 		}
 	}
-	private String miseAJourTimer() {
-		int m = 0;
-		int s = 0;
-		if (secondes < 60) {
-			s = secondes;
-		} else {
-			s = secondes % 60;
-			m = secondes / 60;
-		}
-		
-		
-		return String.format("%d:%d", m, s);
-	}
 	
-	public void initTimer(){
+	public void setGameBackAndForth(int[][] initialeApresSauvegarde, int[][] initialeAvantSauvegarde,int[][] actuelle) {
+		for (int y = 0; y < 9; y++) {
+			for (int x = 0; x < 9; x++) {
+				fields[y][x].setBackground(Color.WHITE);
+				
+				if (initialeApresSauvegarde[y][x] != 0 && initialeApresSauvegarde[y][x] == initialeAvantSauvegarde[y][x]) {
+					fields[y][x].setNumber(actuelle[y][x], false);
+					fields[y][x].setEditable(false);
+				} else {
+					fields[y][x].setNumber(actuelle[y][x], true);
+					fields[y][x].setEditable(true);
+				}
+
+				if (actuelle[y][x] != initialeApresSauvegarde[y][x]) {
+					fields[y][x].setNumber(actuelle[y][x], true);
+				}
+			}
+		}
+	}
+
+    public void setGameSaved(int[][] grilleInitiale, int[][] grilleSaved ) {
+        for (int y = 0; y < 9; y++) {
+            for (int x = 0; x < 9; x++) {
+                fields[y][x].setBackground(Color.WHITE);
+                if(grilleInitiale[y][x] != 0) {
+                    fields[y][x].setNumber(grilleSaved[y][x], false);
+                    fields[y][x].setEditable(false);
+                }
+                else {
+                    fields[y][x].setNumber(grilleSaved[y][x], true);
+                    fields[y][x].setEditable(true);
+                }
+            }
+        }
+    }
+
+	public void initTimer() {
 		this.timer = new Timer(1000, e -> {
 			this.secondes++;
 			this.timerAffichage
@@ -119,25 +149,45 @@ public class GrilleView {
 	}
 
 	public void initHeader() {
-		this.headerPanel = new JPanel(new FlowLayout(10));
+		this.headerPanel = new JPanel(new BorderLayout());
 		JCheckBox aideBox = new JCheckBox();
 		JLabel aideboxJLabel = new JLabel("Aide pas à pas");
 		aideboxJLabel.setLabelFor(aideBox);
+
 		aideBox.addActionListener(e -> {
 			avecAide = aideBox.isSelected();
 		});
-		this.headerPanel.add(aideBox);
+
+		this.headerPanel.add(aideBox, BorderLayout.WEST);
 		this.headerPanel.add(aideboxJLabel);
+
 		timeFormatter = new DecimalFormat("00");
 		initTimer();
 		this.timerAffichage = new JLabel();
-		this.headerPanel.add(timerAffichage);
+		this.headerPanel.add(timerAffichage, BorderLayout.EAST);
 	}
 	
 	public void initButtons() {
 		buttonPanel = new JPanel(new FlowLayout());
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
+		
+		JButton buttonAnnuler = new JButton("Back");
+		JButton buttonAvancer = new JButton("Forward");
+		
+		buttonAnnuler.setEnabled(isBackEnabled);
+		buttonAnnuler.addActionListener(e -> {
+			controller.goBack();
+			buttonAvancer.setEnabled(isForwardEnabled);
+			buttonAnnuler.setEnabled(isBackEnabled);
+		});
+
+		buttonAvancer.setEnabled(isBackEnabled);
+		buttonAvancer.addActionListener(e -> {
+			controller.goForward();
+			buttonAvancer.setEnabled(isForwardEnabled);
+			buttonAnnuler.setEnabled(isBackEnabled);
+		});
 
 		buttonValider.addActionListener(e -> {
 			this.timer.stop();
@@ -147,12 +197,17 @@ public class GrilleView {
 		for (int i = 1; i <= 9; i++) {
 			JButton button = new JButton("" + i + "");
 			buttonPanel.add(button);
-			button.addActionListener(e -> putNumber(Integer.parseInt(button.getText())));
+			button.addActionListener(e -> {
+				buttonAnnuler.setEnabled(true);
+				putNumber(Integer.parseInt(button.getText()));
+			});
 		}
 		JButton buttonEffacer = new JButton("Effacer");
 		buttonPanel.add(buttonEffacer);
 		buttonEffacer.addActionListener(e -> putNumber(0));
 
+		buttonPanel.add(buttonAnnuler);
+		buttonPanel.add(buttonAvancer);
 	}
 
 	public void selectField(Field field) {
@@ -187,7 +242,16 @@ public class GrilleView {
 	public int getSecondes() {
 		return this.secondes;
 	}
+	
 	public void setSecondes(int secondes) {
 		this.secondes = secondes;
+	}
+
+	public void setIsBackEnabled(boolean isEnabled) {
+		this.isBackEnabled = isEnabled;
+	}
+	
+	public void setIsForwardEnabled(boolean isEnabled) {
+		this.isForwardEnabled = isEnabled;
 	}
 }

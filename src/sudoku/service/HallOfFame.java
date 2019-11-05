@@ -1,6 +1,5 @@
 package sudoku.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 import java.io.IOException;
@@ -13,17 +12,12 @@ public class HallOfFame {
 	File fichier = new File("src/sudoku/tableDesScores.txt");
 	String fichierChemin = fichier.getAbsolutePath();
 	List<String> lignes;
+	
 	public HallOfFame() {
-		try {
-			lignes = Files.readAllLines(FileSystems.getDefault().getPath(fichierChemin));
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		lireFichier();
 	}
 	
 	public int verifTemps(String niveauDif, int secondesVerif) {
-		
 		for (int index = 0; index < lignes.size(); index++) {
 			String [] tableauLigne = lignes.get(index).split(",");
 			String niveau = tableauLigne[0];
@@ -44,20 +38,22 @@ public class HallOfFame {
 		ligne[1] = surnom;
 		ligne[2] = String.valueOf(secondes);
 		String nouvelleLigne = String.format("%s,%s,%s", ligne[0], ligne[1], ligne[2]);
-				
-		List<String> nouvelleListe = new ArrayList<String>();
-		for (int i = 0; i < lignes.size(); i++) {
-			if (i == index) {
-				nouvelleListe.add(nouvelleLigne);
-			} else {
-				nouvelleListe.add(lignes.get(i));
-			}
+		
+		if (index % 3 == 0) {
+			lignes.set(index + 2, lignes.get(index + 1));
+			lignes.set(index + 1, lignes.get(index));
+			lignes.set(index, nouvelleLigne);
+		} else if (index % 3 == 1) {
+			lignes.set(index + 1, lignes.get(index));
+			lignes.set(index, nouvelleLigne);
+		} else {
+			lignes.set(index, nouvelleLigne);
 		}
 		
 		Path path = FileSystems.getDefault().getPath(fichierChemin);
 		
 		String nouvelleListeString = ""; 
-		for (String ligneString: nouvelleListe) {
+		for (String ligneString: lignes) {
 			nouvelleListeString += ligneString + "\n";
 		}
 		
@@ -66,6 +62,17 @@ public class HallOfFame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		lireFichier();
+	}
+	
+	private void lireFichier() {
+		try {
+			this.lignes = Files.readAllLines(FileSystems.getDefault().getPath(fichierChemin));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
 	
 	public List<String> getListeHOF() {
