@@ -231,6 +231,8 @@ public class SudokuController extends AbstractController {
 			
 			if (historiqueGrilles.size() == 0) {
 				this.view.setIsBackEnabled(false);
+			} else {
+				this.view.setIsBackEnabled(true);
 			}
 
 			forwardGrilles.push(copyMatrix(grilleJoueur));

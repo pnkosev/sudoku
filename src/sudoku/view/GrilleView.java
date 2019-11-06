@@ -182,7 +182,7 @@ public class GrilleView {
 			buttonAnnuler.setEnabled(isBackEnabled);
 		});
 
-		buttonAvancer.setEnabled(isBackEnabled);
+		buttonAvancer.setEnabled(isForwardEnabled);
 		buttonAvancer.addActionListener(e -> {
 			controller.goForward();
 			buttonAvancer.setEnabled(isForwardEnabled);
