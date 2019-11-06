@@ -1,5 +1,7 @@
 package sudoku.view;
 import sudoku.controller.SudokuController;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
@@ -172,8 +174,19 @@ public class GrilleView {
 		JButton buttonValider = new JButton("Valider");
 		buttonPanel.add(buttonValider);
 		
-		JButton buttonAnnuler = new JButton("Back");
-		JButton buttonAvancer = new JButton("Forward");
+		ImageIcon iconBack = new ImageIcon("back.png");
+		Image imgBack = iconBack.getImage();
+		Image newBackImage = imgBack.getScaledInstance( 20, 18,  java.awt.Image.SCALE_SMOOTH ) ;
+		iconBack = new ImageIcon(newBackImage);
+		
+		
+		ImageIcon iconForward = new ImageIcon("forward.png");
+		Image imgForward = iconForward.getImage();
+		Image newForwardImage = imgForward.getScaledInstance( 20, 18,  java.awt.Image.SCALE_SMOOTH ) ;
+		iconForward = new ImageIcon(newForwardImage);
+		
+		JButton buttonAnnuler = new JButton(iconBack);
+		JButton buttonAvancer = new JButton(iconForward);
 		
 		buttonAnnuler.setEnabled(isBackEnabled);
 		buttonAnnuler.addActionListener(e -> {
